@@ -1,5 +1,7 @@
 # Elastic Defend Windows and Ubuntu Response Script Library
 
+**Warning** This repo should be considered AI slop until tested..
+
 This repository contains explicitly named Windows PowerShell and Ubuntu Bash response actions for the Elastic Security Script Library. Elastic Defend executes them through the `runscript` response action. Elastic Defend `runscript` is generally available in Elastic Stack 9.4 and Elastic Cloud Serverless.
 
 Every action name and executable starts with `Windows-` or `Ubuntu-`. This prevents an analyst from confusing platform-specific implementations. Elastic Script Library metadata must also use the prefixed display names from `catalog.json`.
