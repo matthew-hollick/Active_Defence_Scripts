@@ -100,7 +100,7 @@ Elastic passes `--inputParams` as command-line arguments. Parameters are platfor
 
 ```text
 runscript --script="Windows - Disable Local User Account" --inputParams="-Name localuser" --timeout="2m" --comment="IR-1234 disable confirmed account"
-runscript --script="Windows - Disable AD User Account" --inputParams='"alice" "bob" "frank"' --timeout="2m" --comment="IR-1234 disable confirmed AD users"
+runscript --script="Windows - Disable AD User Account" --inputParams="alice bob frank" --timeout="2m" --comment="IR-1234 disable confirmed AD users"
 runscript --script="Ubuntu - Disable Local User Account" --inputParams="--name localuser" --timeout="2m" --comment="IR-1234 disable confirmed account"
 runscript --script="Ubuntu - Block Remote IP Address" --inputParams="--address 203.0.113.10 --direction both" --timeout="2m" --comment="IR-1234 block confirmed C2"
 ```
