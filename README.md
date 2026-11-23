@@ -38,7 +38,7 @@ Each action writes one compressed JSON object to standard output and exits `0` o
 
 | Script Library name | Purpose | Input example |
 |---|---|---|
-| Windows - Disable AD User Account | Disable an AD user on a DC | `-Identity "alice"` |
+| Windows - Disable AD User Account | Disable one or more AD users on a DC | `"alice" "bob" "frank"` |
 | Windows - Disable AD Computer Account | Disable an AD computer on a DC | `-Identity "WORKSTATION01"` |
 | Windows - Remove AD User Group Memberships | Remove direct memberships except a preserve list | `-Identity "alice" -PreserveGroups "Domain Users,IR Hold"` |
 | Windows - Disable Local User Account | Disable a local Windows account | `-Name "localuser"` |
@@ -100,6 +100,7 @@ Elastic passes `--inputParams` as command-line arguments. Parameters are platfor
 
 ```text
 runscript --script="Windows - Disable Local User Account" --inputParams="-Name localuser" --timeout="2m" --comment="IR-1234 disable confirmed account"
+runscript --script="Windows - Disable AD User Account" --inputParams='"alice" "bob" "frank"' --timeout="2m" --comment="IR-1234 disable confirmed AD users"
 runscript --script="Ubuntu - Disable Local User Account" --inputParams="--name localuser" --timeout="2m" --comment="IR-1234 disable confirmed account"
 runscript --script="Ubuntu - Block Remote IP Address" --inputParams="--address 203.0.113.10 --direction both" --timeout="2m" --comment="IR-1234 block confirmed C2"
 ```
@@ -146,7 +147,7 @@ Optional `alert_ids` and `case_ids` associate the response with alerts or cases.
 - Quote values containing spaces, commas, or shell-significant characters.
 - Never pass passwords, private keys, access tokens, API keys, or other secrets through `--inputParams` or `scriptInput`; arguments can be retained in response history, logs, and endpoint telemetry.
 - Do not append pipelines, redirections, command substitutions, script blocks, arbitrary shell commands, or encoded commands.
-- Windows list parameters are comma-separated quoted strings to avoid native PowerShell array-binding ambiguity.
+- Windows list parameters are comma-separated quoted strings to avoid native PowerShell array-binding ambiguity, except Windows - Disable AD User Account, which accepts space-separated quoted identities.
 - Ubuntu scripts reject unknown options and validate identifiers, PIDs, absolute paths, directions, and IP addresses.
 - Windows mutating scripts support `-WhatIf`. Do not include it in production remediation.
 
@@ -156,7 +157,7 @@ Optional `alert_ids` and `case_ids` associate the response with alerts or cases.
 
 Local administrator or SYSTEM rights on a member endpoint do not grant AD modification rights. The AD scripts refuse to run outside a domain controller. Dispatch them only to approved enrolled DC endpoint IDs. Disabling a user does not revoke all cloud/application sessions, and AD replication is asynchronous. Use the identity provider's session-revocation workflow separately and verify replicated state.
 
-The user-disable action refuses the built-in Administrator (RID 500) and krbtgt accounts, refuses direct members of `IR-Protected-Accounts` when that group exists (create the group and add break-glass/service accounts to protect them), and verifies the account is disabled on the local DC before reporting success. Success `details.status` is `Changed`, `NoChange`, or `Skipped`; `Skipped` (exit 0) occurs only under `-WhatIf`.
+The user-disable action accepts multiple space-delimited accounts and reports a per-account status of `Changed`, `NoChange`, `Skipped`, or `Failed`, plus summary counts. It continues processing after an account fails and exits 1 if any account failed. It refuses the built-in Administrator (RID 500), krbtgt accounts, and direct members of `IR-Protected-Accounts` when that group exists (create the group and add break-glass/service accounts to protect them). It verifies each account is disabled on the local DC before reporting success; `Skipped` (exit 0) occurs only under `-WhatIf`.
 
 ### Ubuntu accounts
 

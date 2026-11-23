@@ -20,8 +20,8 @@
       "package": "packages/windows-disable-ad-user.zip",
       "executablePath": "./Windows-Disable-ADUserAccount.ps1",
       "scope": "domain-controller",
-      "inputExample": "-Identity \"alice\"",
-      "parameters": [{"name":"Identity","type":"string","required":true}]
+      "inputExample": "\"alice\" \"bob\" \"frank\"",
+      "parameters": [{"name":"Identity","type":"space-separated strings","required":true}]
     },
     {
       "id": "windows-disable-ad-computer",
